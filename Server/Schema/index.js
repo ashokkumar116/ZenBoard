@@ -1,5 +1,5 @@
 // db/schema/index.js — export everything from one place
-export * from './users.js';
-export * from './tasks.js';
-export * from './habits.js';
-export * from './notes.js';
+export {users} from './users.js';
+export {tasks} from './tasks.js';
+export {habits} from './habits.js';
+export {notes} from './notes.js';

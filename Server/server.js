@@ -1,7 +1,7 @@
 import express from "express";
 import "dotenv/config"
 import cors from "cors"
-
+import authRoute from "./Routes/authRoute.js";
 
 const app = express();
 
@@ -15,6 +15,8 @@ app.use(cors({
 app.get("/", (req, res) => {
     res.send("Server is running");
 });
+
+app.use("/api/auth", authRoute);
 
 const PORT = process.env.PORT || 8080;
 
