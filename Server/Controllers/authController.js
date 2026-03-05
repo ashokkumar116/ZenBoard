@@ -5,7 +5,8 @@ import { users } from "../Schema/users.js";
 import jwt from "jsonwebtoken"
 
 const registerUser = async(req,res)=>{
-    const {name,email,password} = req.body;
+    try {
+        const {name,email,password} = req.body;
 
     if(!name || !email || !password){
         return res.status(400).json({message:"All fields are required"})
@@ -27,11 +28,15 @@ const registerUser = async(req,res)=>{
     })
 
     res.status(201).json({message:"User registered successfully"})
-
+} catch (error) {
+    console.log(error)
+    res.status(500).json({message:"Internal server error"})
+}
 }
 
 const loginUser = async(req,res)=>{
-    const {email,password} = req.body;
+    try {
+        const {email,password} = req.body;
 
     if(!email || !password){
         return res.status(400).json({message:"All fields are required"})
@@ -44,14 +49,40 @@ const loginUser = async(req,res)=>{
 
     const isPasswordValid = await bcrypt.compare(password,user[0].password_hash)
     if(!isPasswordValid){
-        return res.status(401).json({message:"Invalid password"})
+        return res.status(401).json({message:"Wrong password"})
     }
 
-    const token = jwt.sign({id:user[0].id,name:user[0].name,email:user[0].email},process.env.JWT_SECRET,{expiresIn:"1h"})
-    res.cookie("token",token,{httpOnly:true,secure:true,sameSite:"strict",maxAge:3600000})
+    const token = jwt.sign({
+        id:user[0].id,
+        name:user[0].name,
+        email:user[0].email
+    },process.env.JWT_SECRET,{
+        expiresIn:"1h"
+    })
+
+    res.cookie("token",token,{
+        httpOnly:true,
+        secure:process.env.NODE_ENV === "production",
+        sameSite:process.env.NODE_ENV === "production" ? "strict" : "lax",
+        maxAge:3600000
+    })
 
     res.status(200).json({message:"User logged in successfully"})
+} catch (error) {
+    console.log(error)
+    res.status(500).json({message:"Internal server error"})
+}
+}
+
+const logoutUser = async(req,res)=>{
+    try {
+        res.clearCookie("token")
+        res.status(200).json({message:"User logged out successfully"})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
+    }
 }
 
 
-export {registerUser,loginUser}
+export {registerUser,loginUser,logoutUser}
