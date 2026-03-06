@@ -1,1 +1,611 @@
+/* ============================================================
+   ZENBOARD — Global Theme
+   index.css
+   Stack: React + Tailwind CSS + Custom CSS Variables
+   ============================================================ */
+
+/* ── Google Fonts ── */
 @import "tailwindcss";
+
+
+
+
+/* ============================================================
+   1. CSS VARIABLES — Design Tokens
+   ============================================================ */
+
+:root {
+
+  /* ── Base Surfaces ── */
+  --base-0:    #0C0D0F;   /* Page background (deepest layer)     */
+  --base-1:    #111316;   /* App shell / sidebar                  */
+  --base-2:    #181B1F;   /* Card surfaces                        */
+  --base-3:    #1F2329;   /* Elevated card / hover state          */
+  --base-4:    #272C34;   /* Input background                     */
+
+  /* ── Borders ── */
+  --border:       #2A2F38;   /* Default border                    */
+  --border-hi:    #3A414D;   /* Hover / focused border            */
+  --border-focus: #E8933A;   /* Focus ring border (amber)         */
+
+  /* ── Primary Accent: Amber ── */
+  --amber-dim:  #7A4A1A;
+  --amber-mid:  #C47A2E;
+  --amber:      #E8933A;   /* Primary CTA, active state           */
+  --amber-hi:   #F5A94E;   /* Hover on primary                    */
+  --amber-glow: rgba(232, 147, 58, 0.12);  /* Glow BG for tags    */
+  --amber-ring: rgba(232, 147, 58, 0.10);  /* Focus ring shadow   */
+
+  /* ── Semantic Colors ── */
+  --green:         #4CAF7D;              /* Done / Success / Streak */
+  --green-bg:      rgba(76, 175, 125, 0.12);
+  --green-border:  rgba(76, 175, 125, 0.25);
+
+  --red:           #E05C5C;              /* Overdue / Danger        */
+  --red-bg:        rgba(224, 92, 92, 0.10);
+  --red-border:    rgba(224, 92, 92, 0.20);
+
+  --blue:          #5B8DEF;              /* Notes / Info            */
+  --blue-bg:       rgba(91, 141, 239, 0.10);
+  --blue-border:   rgba(91, 141, 239, 0.20);
+
+  --purple:        #9B7FE8;              /* Events / Calendar       */
+  --purple-bg:     rgba(155, 127, 232, 0.10);
+  --purple-border: rgba(155, 127, 232, 0.20);
+
+  --muted:         #4A5263;              /* Placeholder text        */
+
+  /* ── Text Hierarchy ── */
+  --text-primary:   #E8EAF0;
+  --text-secondary: #9AA3B2;
+  --text-tertiary:  #606878;
+  --text-disabled:  #3E4452;
+
+  /* ── Typography ── */
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'Instrument Sans', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+
+  /* ── Font Sizes ── */
+  --text-xs:   10px;
+  --text-sm:   12px;
+  --text-base: 14px;
+  --text-md:   16px;
+  --text-lg:   20px;
+  --text-xl:   28px;
+  --text-2xl:  40px;
+  --text-3xl:  56px;
+
+  /* ── Font Weights ── */
+  --weight-regular: 400;
+  --weight-medium:  500;
+  --weight-semibold: 600;
+  --weight-bold:    700;
+  --weight-extrabold: 800;
+
+  /* ── Line Heights ── */
+  --leading-tight:  1.2;
+  --leading-snug:   1.4;
+  --leading-normal: 1.6;
+  --leading-loose:  1.8;
+
+  /* ── Letter Spacing ── */
+  --tracking-tight:  -0.03em;
+  --tracking-normal:  0em;
+  --tracking-wide:    0.08em;
+  --tracking-wider:   0.12em;
+  --tracking-widest:  0.18em;
+
+  /* ── Border Radius ── */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-pill: 9999px;
+
+  /* ── Spacing Scale ── */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ── Transitions ── */
+  --transition-fast:   all 0.15s ease;
+  --transition-base:   all 0.20s ease;
+  --transition-slow:   all 0.30s ease;
+
+  /* ── Shadows ── */
+  --shadow-sm:     0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md:     0 4px 12px rgba(0, 0, 0, 0.5);
+  --shadow-lg:     0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-amber:  0 0 0 3px var(--amber-ring);
+  --shadow-inset:  inset 0 1px 0 rgba(255, 255, 255, 0.04);
+
+  /* ── Z-Index Scale ── */
+  --z-base:     0;
+  --z-above:    10;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+}
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--base-0);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* ── Root App Container ── */
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--base-1);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-hi);
+  border-radius: var(--radius-pill);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted);
+}
+
+/* ── Selection ── */
+::selection {
+  background: var(--amber-glow);
+  color: var(--amber-hi);
+}
+
+/* ============================================================
+   3. TYPOGRAPHY UTILITIES
+   ============================================================ */
+
+/* Display — page titles, brand marks */
+.font-display { font-family: var(--font-display); }
+.font-body    { font-family: var(--font-body); }
+.font-mono    { font-family: var(--font-mono); }
+
+/* Heading Defaults */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: var(--weight-bold);
+  line-height: var(--leading-tight);
+  color: var(--text-primary);
+}
+h1 { font-size: var(--text-xl);  letter-spacing: var(--tracking-tight); }
+h2 { font-size: var(--text-lg);  letter-spacing: -0.01em; }
+h3 { font-size: var(--text-md);  font-weight: var(--weight-semibold); }
+h4 { font-size: var(--text-base); font-weight: var(--weight-semibold); }
+
+p {
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+}
+
+a {
+  color: var(--amber);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+a:hover {
+  color: var(--amber-hi);
+}
+
+code, kbd, pre {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+}
+
+/* Section Label — mono uppercase tag used throughout UI */
+.section-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-widest);
+  text-transform: uppercase;
+  color: var(--amber);
+}
+
+/* Page Meta / Timestamps */
+.text-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ============================================================
+   4. COMPONENT BASE STYLES
+   ============================================================ */
+
+/* ── Card ── */
+.z-card {
+  background: var(--base-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  transition: var(--transition-base);
+}
+.z-card:hover {
+  border-color: var(--border-hi);
+}
+.z-card--elevated {
+  background: var(--base-3);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Input ── */
+.z-input {
+  width: 100%;
+  background: var(--base-4);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px var(--space-4);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  outline: none;
+  transition: var(--transition-base);
+}
+.z-input::placeholder {
+  color: var(--muted);
+}
+.z-input:hover {
+  border-color: var(--border-hi);
+}
+.z-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-amber);
+}
+
+textarea.z-input {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ── Button: Primary ── */
+.z-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 9px var(--space-4);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  border: none;
+  cursor: pointer;
+  transition: var(--transition-base);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.z-btn--primary {
+  background: var(--amber);
+  color: #0C0D0F;
+}
+.z-btn--primary:hover {
+  background: var(--amber-hi);
+}
+.z-btn--primary:active {
+  background: var(--amber-mid);
+}
+
+.z-btn--ghost {
+  background: transparent;
+  border: 1px solid var(--border-hi);
+  color: var(--text-secondary);
+}
+.z-btn--ghost:hover {
+  background: var(--base-3);
+  color: var(--text-primary);
+  border-color: var(--border-hi);
+}
+
+.z-btn--danger {
+  background: var(--red-bg);
+  border: 1px solid var(--red-border);
+  color: var(--red);
+}
+.z-btn--danger:hover {
+  background: rgba(224, 92, 92, 0.18);
+}
+
+.z-btn--icon {
+  padding: 8px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-tertiary);
+}
+.z-btn--icon:hover {
+  background: var(--base-3);
+  color: var(--text-secondary);
+  border-color: var(--border-hi);
+}
+
+.z-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Badge / Tag ── */
+.z-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px 10px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  border: 1px solid transparent;
+}
+
+.z-tag--amber {
+  background: var(--amber-glow);
+  border-color: rgba(232, 147, 58, 0.20);
+  color: var(--amber);
+}
+.z-tag--green {
+  background: var(--green-bg);
+  border-color: var(--green-border);
+  color: var(--green);
+}
+.z-tag--red {
+  background: var(--red-bg);
+  border-color: var(--red-border);
+  color: var(--red);
+}
+.z-tag--blue {
+  background: var(--blue-bg);
+  border-color: var(--blue-border);
+  color: var(--blue);
+}
+.z-tag--purple {
+  background: var(--purple-bg);
+  border-color: var(--purple-border);
+  color: var(--purple);
+}
+.z-tag--muted {
+  background: var(--base-3);
+  border-color: var(--border);
+  color: var(--text-tertiary);
+}
+
+/* ── Divider ── */
+.z-divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  border: none;
+  margin: var(--space-4) 0;
+}
+
+/* ── Progress Bar ── */
+.z-progress {
+  width: 100%;
+  height: 3px;
+  background: var(--base-4);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+.z-progress__fill {
+  height: 100%;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--amber-mid), var(--amber-hi));
+  transition: width 0.4s ease;
+}
+.z-progress__fill--green  { background: var(--green); }
+.z-progress__fill--red    { background: var(--red); }
+.z-progress__fill--blue   { background: var(--blue); }
+
+/* ── Checkbox ── */
+.z-checkbox {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border: 1.5px solid var(--border-hi);
+  border-radius: var(--radius-xs);
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-fast);
+}
+.z-checkbox:hover {
+  border-color: var(--amber);
+}
+.z-checkbox--checked {
+  background: var(--green-bg);
+  border-color: var(--green);
+}
+
+/* ── Nav Item ── */
+.z-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 9px var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-base);
+  font-weight: var(--weight-medium);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: var(--transition-fast);
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+.z-nav-item:hover {
+  background: var(--base-3);
+  color: var(--text-secondary);
+}
+.z-nav-item--active {
+  background: var(--amber-glow);
+  color: var(--amber);
+  border-color: rgba(232, 147, 58, 0.15);
+}
+
+/* ── Toast / Alert ── */
+.z-toast {
+  background: var(--base-3);
+  border: 1px solid var(--border-hi);
+  border-left: 3px solid var(--amber);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  font-size: var(--text-base);
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-lg);
+}
+.z-toast--success { border-left-color: var(--green); }
+.z-toast--error   { border-left-color: var(--red); }
+.z-toast--info    { border-left-color: var(--blue); }
+
+/* ── Skeleton Loader ── */
+.z-skeleton {
+  background: linear-gradient(90deg,
+    var(--base-2) 25%,
+    var(--base-3) 50%,
+    var(--base-2) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.5s infinite ease-in-out;
+  border-radius: var(--radius-sm);
+}
+@keyframes skeleton-shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Focus Visible (Accessibility) ── */
+:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--base-0), 0 0 0 4px var(--amber);
+  border-radius: var(--radius-sm);
+}
+
+/* ============================================================
+   5. LAYOUT UTILITIES
+   ============================================================ */
+
+.app-layout {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--base-0);
+}
+
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  height: 100vh;
+  background: var(--base-1);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-5) var(--space-3);
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-8) var(--space-10);
+  background: var(--base-0);
+}
+
+/* ── Page Header ── */
+.page-header {
+  margin-bottom: var(--space-8);
+}
+.page-header__title {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}
+.page-header__meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  letter-spacing: var(--tracking-wide);
+}
+
+/* ============================================================
+   6. AMBIENT EFFECTS
+   ============================================================ */
+
+/* Radial amber glow — top of page hero sections */
+.ambient-glow {
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse at top, rgba(232, 147, 58, 0.06) 0%, transparent 70%);
+  z-index: var(--z-base);
+}
+
+/* Noise texture overlay — add to ::before of body if needed */
+.noise-overlay::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.25;
+  z-index: var(--z-overlay);
+}

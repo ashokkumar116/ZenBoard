@@ -2,7 +2,7 @@ import React from 'react'
 
 const App = () => {
   return (
-    <div className='text-5xl'>ZenBoard</div>
+    <div className='font-display text-2xl font-bold'>ZenBoard</div>
   )
 }
 
