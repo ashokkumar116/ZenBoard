@@ -25,5 +25,16 @@ export const useAuthStore = create((set) => ({
         set({ isLoading: false })
        }
     },
+    checkAuth: async() => {
+        try {
+            const response = await api.get('auth/check')
+            if(response.status === 200){
+                set({ user: response.data })
+            }
+        } catch (error) {
+            console.log(error)
+            set({ error: error?.response?.data?.message })
+        }
+    },
     logout: () => set({ user: null })
 }))

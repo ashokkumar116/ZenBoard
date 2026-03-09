@@ -246,7 +246,7 @@ export default function Login() {
       // authStore.setToken(token);
       const response = await login(values);
       if(response.success){
-        navigate('/dashboard');
+        navigate('/app');
       }else{
         setGlobalError(response.error);
       }
