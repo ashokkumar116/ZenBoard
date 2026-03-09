@@ -14,7 +14,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../components/ui/Logo';
-import api from '../../Services/api';
+import {useAuthStore}  from '../../store/useAuthStore';
 
 // ── Static content ────────────────────────────────────────────────
 const BRAND_COPY = {
@@ -209,8 +209,9 @@ export default function Login() {
   const [values, setValues] = useState({ email: '', password: '' });
   const [errors, setErrors] = useState({});
   const [showPassword, setShowPassword] = useState({ password: false });
-  const [isLoading, setIsLoading] = useState(false);
   const [globalError, setGlobalError] = useState('');
+  const {login, error, isLoading} = useAuthStore()
+  console.log(globalError)
 
   // ── Handlers ──────────────────────────────────────────────────
 
@@ -237,25 +238,22 @@ export default function Login() {
       setErrors(fieldErrors);
       return;
     }
-
-    setIsLoading(true);
     setGlobalError('');
 
     try {
       // TODO: replace with your auth API call
       // const { token } = await authApi.login(values);
       // authStore.setToken(token);
-      const response = await api.post('/auth/login', { email: values.email, password: values.password });
-      console.log(response.data);
-      if(response.status === 200) {
+      const response = await login(values);
+      if(response.success){
         navigate('/dashboard');
+      }else{
+        setGlobalError(response.error);
       }
-    } catch (err) {
+    } catch (error) {
       // Map specific API errors to field errors if needed
       // e.g. if (err.code === 'INVALID_CREDENTIALS') ...
-      setGlobalError(err?.response?.data?.message ?? 'Invalid email or password.');
-    } finally {
-      setIsLoading(false);
+      setGlobalError(error);
     }
   }
 
