@@ -14,6 +14,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../components/ui/Logo';
+import api from '../../Services/api';
 
 // ── Static content ────────────────────────────────────────────────
 const BRAND_COPY = {
@@ -244,12 +245,15 @@ export default function Login() {
       // TODO: replace with your auth API call
       // const { token } = await authApi.login(values);
       // authStore.setToken(token);
-      await new Promise(r => setTimeout(r, 1000)); // placeholder
-      navigate('/dashboard');
+      const response = await api.post('/auth/login', { email: values.email, password: values.password });
+      console.log(response.data);
+      if(response.status === 200) {
+        navigate('/dashboard');
+      }
     } catch (err) {
       // Map specific API errors to field errors if needed
       // e.g. if (err.code === 'INVALID_CREDENTIALS') ...
-      setGlobalError(err?.message ?? 'Invalid email or password.');
+      setGlobalError(err?.response?.data?.message ?? 'Invalid email or password.');
     } finally {
       setIsLoading(false);
     }

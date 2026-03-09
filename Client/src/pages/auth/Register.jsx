@@ -31,6 +31,7 @@ import { Link, useNavigate }           from 'react-router-dom';
 import gsap                            from 'gsap';
 import { useGSAP }                     from '@gsap/react';
 import Logo                            from '../../components/ui/Logo';
+import api from '../../Services/api';
 
 gsap.registerPlugin(useGSAP);
 
@@ -617,10 +618,13 @@ export default function Register() {
     try {
       // TODO: replace with your auth API call
       // await authApi.register({ name: values.fullName, email: values.email, password: values.password });
-      await new Promise(r => setTimeout(r, 1000)); // placeholder
-      navigate('/dashboard');
+      const response = await api.post('/auth/register', { name: values.fullName, email: values.email, password: values.password });
+      console.log(response.data);
+      if(response.status === 201) {
+        navigate('/login');
+      }
     } catch (err) {
-      setGlobalError(err?.message ?? 'Something went wrong. Please try again.');
+      setGlobalError(err?.response?.data?.message ?? 'Something went wrong. Please try again.');
     } finally {
       setIsLoading(false);
     }
