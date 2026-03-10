@@ -74,6 +74,20 @@ const loginUser = async(req,res)=>{
 }
 }
 
+const checkAuth = async(req,res)=>{
+    try {
+        const user = req.user
+        if(!user){
+            return res.status(401).json({message:"Unauthorized"})
+        }
+        res.status(200).json({user})
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Internal server error"})
+    }
+}
+
+
 const logoutUser = async(req,res)=>{
     try {
         res.clearCookie("token")
@@ -85,4 +99,4 @@ const logoutUser = async(req,res)=>{
 }
 
 
-export {registerUser,loginUser,logoutUser}
+export {registerUser,loginUser,checkAuth,logoutUser}
