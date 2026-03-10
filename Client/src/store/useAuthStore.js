@@ -27,7 +27,7 @@ export const useAuthStore = create((set) => ({
     },
     checkAuth: async() => {
         try {
-            const response = await api.get('auth/check')
+            const response = await api.get('auth/me')
             if(response.status === 200){
                 set({ user: response.data })
             }

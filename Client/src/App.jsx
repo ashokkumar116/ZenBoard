@@ -7,13 +7,23 @@ import ProtectedRoute from './routes/ProtectedRoute'
 import { useAuthStore } from './store/useAuthStore'
 
 const App = () => {
-  const {user,isLoading} = useAuthStore();
+  const {user,isLoading,checkAuth} = useAuthStore();
+  
+  
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
+
+  // if(isLoading){
+  //   return <div>Loading...</div>
+  // }
 
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={user?<Navigate to="/app" />:<Login />} />
-        <Route path="/register" element={user?<Navigate to="/app" />:<Register />} />
+        <Route path="/login" element={user ? <Navigate to="/app" /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to="/app" /> : <Register />} />
         <Route path='/app' element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
           {/* <Route path='dashboard' index element={<Dashboard />} />
           <Route path='Tasks' element={<Tasks />} />
