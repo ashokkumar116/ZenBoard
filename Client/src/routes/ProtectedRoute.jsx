@@ -1,8 +1,8 @@
 import React from 'react'
 import { useAuthStore } from '../store/useAuthStore'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 
-const ProtectedRoute = ({children}) => {
+const ProtectedRoute = () => {
     const {user,isLoading} = useAuthStore()
     if(isLoading){
     return <div>Loading...</div>
@@ -10,7 +10,7 @@ const ProtectedRoute = ({children}) => {
     if(!user){
         return <Navigate to="/login" />
     }
-    return children
+    return <Outlet />
 }
 
 export default ProtectedRoute

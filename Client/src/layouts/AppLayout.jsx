@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { useAuthStore } from '../store/useAuthStore'
-import { useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate } from 'react-router-dom'
+import Sidebar from '../components/common/Sidebar'
+import Navbar from '../components/common/Navbar'
 
 const AppLayout = () => {
     const {user} = useAuthStore()
@@ -9,10 +11,18 @@ const AppLayout = () => {
         if(!user){
             navigate('/login')
         }
-    },[user])
+    },[user,navigate])
   return (
 
-    <div>AppLayout</div>
+    <div className='flex h-screen'>
+      <Sidebar />
+      <div className="flex-1">
+        <Navbar />
+        <main className="p-6">
+          <Outlet />
+        </main>
+      </div>
+    </div>
   )
 }
 

@@ -5,6 +5,11 @@ import Register from './pages/auth/Register'
 import AppLayout from './layouts/AppLayout'
 import ProtectedRoute from './routes/ProtectedRoute'
 import { useAuthStore } from './store/useAuthStore'
+import Dashboard from './pages/app/Dashboard'
+import Tasks from './pages/app/Tasks'
+import Habits from './pages/app/Habits'
+import Notes from './pages/app/Notes'
+import Settings from './pages/app/Settings'
 
 const App = () => {
   const {user,isLoading,checkAuth} = useAuthStore();
@@ -22,14 +27,18 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={user ? <Navigate to="/app" /> : <Login />} />
-        <Route path="/register" element={user ? <Navigate to="/app" /> : <Register />} />
-        <Route path='/app' element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-          {/* <Route path='dashboard' index element={<Dashboard />} />
-          <Route path='Tasks' element={<Tasks />} />
-          <Route path='Habits' element={<Habits />} />
-          <Route path='Notes' element={<Notes />} />
-          <Route path='Settings' element={<Settings />} /> */}
+        <Route path='/' element={user ? <Navigate to="/app/dashboard" /> : <Navigate to="/login" />} />
+        <Route path="/login" element={user ? <Navigate to="/app/dashboard" /> : <Login />} />
+        <Route path="/register" element={user ? <Navigate to="/app/dashboard" /> : <Register />} />
+        <Route path='/app' element={<ProtectedRoute/>}>
+          <Route element={<AppLayout />} >
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path='dashboard' element={<Dashboard />} />
+            <Route path='tasks' element={<Tasks />} />
+            <Route path='habits' element={<Habits />} />
+            <Route path='notes' element={<Notes />} />
+            <Route path='settings' element={<Settings />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
