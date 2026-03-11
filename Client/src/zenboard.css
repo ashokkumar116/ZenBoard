@@ -817,3 +817,442 @@
   .z-interactive:hover { opacity: 0.85; }
 
 } /* end @layer utilities */
+
+
+/* ================================================================
+ *  toast.css — Zenboard Toast System Styles
+ *  "Obsidian Command Center"
+ *
+ *  Import in main.jsx AFTER zenboard.css:
+ *    import './styles/index.css'
+ *    import './styles/zenboard.css'
+ *    import './styles/toast.css'
+ *
+ *  All values reference CSS custom properties from index.css.
+ *  Never hardcode hex values here.
+ *
+ *  Relies on:
+ *    --color-base-*        surface layers
+ *    --color-border*       borders
+ *    --color-fg*           text hierarchy
+ *    --color-amber*        amber accent
+ *    --color-success/danger/info/muted  semantic
+ *    --font-body / --font-mono          typography
+ *    --radius-sm / --radius-md          corners
+ *    --shadow-modal / --shadow-focus    elevation + focus
+ *    --z-toast                          stacking order
+ * ================================================================ */
+
+
+/* ── KEYFRAMES ─────────────────────────────────────────────── */
+
+/* Progress bar drains from full → empty */
+@keyframes toast-progress {
+  from { width: 100%; }
+  to   { width: 0%;   }
+}
+
+/* Loading icon rotation */
+@keyframes toast-spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+/* Enter / exit — from right (top-right, bottom-right) */
+@keyframes toast-enter-right {
+  from { opacity: 0; transform: translateX(calc(100% + 16px)) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0)                  scale(1);    }
+}
+@keyframes toast-exit-right {
+  from { opacity: 1; transform: translateX(0)                  scale(1);    }
+  to   { opacity: 0; transform: translateX(calc(100% + 16px)) scale(0.95); }
+}
+
+/* Enter / exit — from left (top-left, bottom-left) */
+@keyframes toast-enter-left {
+  from { opacity: 0; transform: translateX(calc(-100% - 16px)) scale(0.95); }
+  to   { opacity: 1; transform: translateX(0)                   scale(1);    }
+}
+@keyframes toast-exit-left {
+  from { opacity: 1; transform: translateX(0)                   scale(1);    }
+  to   { opacity: 0; transform: translateX(calc(-100% - 16px)) scale(0.95); }
+}
+
+/* Enter / exit — from top (top-center) */
+@keyframes toast-enter-top {
+  from { opacity: 0; transform: translateY(calc(-100% - 16px)) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)                   scale(1);    }
+}
+@keyframes toast-exit-top {
+  from { opacity: 1; transform: translateY(0)                   scale(1);    }
+  to   { opacity: 0; transform: translateY(calc(-100% - 16px)) scale(0.95); }
+}
+
+/* Enter / exit — from bottom (bottom-center) */
+@keyframes toast-enter-bottom {
+  from { opacity: 0; transform: translateY(calc(100% + 16px)) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)                  scale(1);    }
+}
+@keyframes toast-exit-bottom {
+  from { opacity: 1; transform: translateY(0)                  scale(1);    }
+  to   { opacity: 0; transform: translateY(calc(100% + 16px)) scale(0.95); }
+}
+
+
+/* ── CONTAINERS ────────────────────────────────────────────── */
+/*
+  One container div per position region.
+  pointer-events: none → background stays clickable.
+  Each toast re-enables: pointer-events: all.
+*/
+
+.z-toast-container {
+  position: fixed;
+  z-index: var(--z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+  max-width: min(420px, calc(100vw - 32px));
+  width: max-content;
+}
+
+.z-toast-container--top-left {
+  top: 16px;
+  left: 16px;
+  align-items: flex-start;
+}
+.z-toast-container--top-center {
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+.z-toast-container--top-right {
+  top: 16px;
+  right: 16px;
+  align-items: flex-end;
+}
+.z-toast-container--bottom-left {
+  bottom: 16px;
+  left: 16px;
+  align-items: flex-start;
+}
+.z-toast-container--bottom-center {
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+.z-toast-container--bottom-right {
+  bottom: 16px;
+  right: 16px;
+  align-items: flex-end;
+}
+
+
+/* ── BASE TOAST CARD ───────────────────────────────────────── */
+
+.z-toast {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  max-width: min(420px, calc(100vw - 32px));
+  background: var(--color-base-2);
+  border: 1px solid var(--color-border-hi);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-modal);
+  overflow: hidden;
+  pointer-events: all;
+  will-change: transform, opacity;
+}
+
+
+/* ── ENTER / EXIT — wired by slide direction class ─────────── */
+
+.z-toast--from-right.z-toast--entering {
+  animation: toast-enter-right 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.z-toast--from-right.z-toast--exiting {
+  animation: toast-exit-right  0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.z-toast--from-left.z-toast--entering {
+  animation: toast-enter-left  0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.z-toast--from-left.z-toast--exiting {
+  animation: toast-exit-left   0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.z-toast--from-top.z-toast--entering {
+  animation: toast-enter-top   0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.z-toast--from-top.z-toast--exiting {
+  animation: toast-exit-top    0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+.z-toast--from-bottom.z-toast--entering {
+  animation: toast-enter-bottom 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.z-toast--from-bottom.z-toast--exiting {
+  animation: toast-exit-bottom  0.28s cubic-bezier(0.55, 0, 1, 0.45) forwards;
+}
+
+
+/* ── LEFT TYPE ACCENT BAR ──────────────────────────────────── */
+
+.z-toast-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+}
+
+/* Bar color per type */
+.z-toast--success .z-toast-bar { background: var(--color-success);    }
+.z-toast--error   .z-toast-bar { background: var(--color-danger);     }
+.z-toast--warning .z-toast-bar { background: var(--color-amber);      }
+.z-toast--info    .z-toast-bar { background: var(--color-info);       }
+.z-toast--loading .z-toast-bar { background: var(--color-muted);      }
+.z-toast--default .z-toast-bar { background: var(--color-border-hi);  }
+
+/* Icon color per type */
+.z-toast--success .z-toast-icon { color: var(--color-success); }
+.z-toast--error   .z-toast-icon { color: var(--color-danger);  }
+.z-toast--warning .z-toast-icon { color: var(--color-amber);   }
+.z-toast--info    .z-toast-icon { color: var(--color-info);    }
+.z-toast--loading .z-toast-icon { color: var(--color-fg-2);   }
+.z-toast--default .z-toast-icon { color: var(--color-fg-3);   }
+
+/* Subtle background tint per type (color-mix = no extra vars needed) */
+.z-toast--success {
+  background: color-mix(in srgb, var(--color-base-2) 95%, var(--color-success) 5%);
+}
+.z-toast--error {
+  background: color-mix(in srgb, var(--color-base-2) 95%, var(--color-danger)  5%);
+}
+.z-toast--warning {
+  background: color-mix(in srgb, var(--color-base-2) 95%, var(--color-amber)   5%);
+}
+.z-toast--info {
+  background: color-mix(in srgb, var(--color-base-2) 95%, var(--color-info)    5%);
+}
+
+
+/* ── BODY ROW ──────────────────────────────────────────────── */
+/* Extra left padding clears the 3px bar */
+
+.z-toast-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 12px 13px 18px;
+}
+
+
+/* ── ICON ──────────────────────────────────────────────────── */
+
+.z-toast-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  margin-top: 1px;
+}
+
+
+/* ── TEXT ──────────────────────────────────────────────────── */
+
+.z-toast-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.z-toast-title {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-fg);
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.z-toast-message {
+  font-family: var(--font-body);
+  font-size: 0.8125rem;
+  color: var(--color-fg-2);
+  line-height: 1.5;
+}
+
+/* When a title is present, message steps down in hierarchy */
+.z-toast-title + .z-toast-message {
+  font-size: 0.75rem;
+  color: var(--color-fg-3);
+}
+
+.z-toast-desc {
+  font-family: var(--font-body);
+  font-size: 0.75rem;
+  color: var(--color-fg-3);
+  line-height: 1.4;
+  margin-top: 5px;
+}
+
+
+/* ── ACTION BUTTON ─────────────────────────────────────────── */
+
+.z-toast-action {
+  flex-shrink: 0;
+  align-self: center;
+  font-family: var(--font-mono);
+  font-size: 0.5625rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-amber);
+  background: var(--color-amber-glow);
+  border: 1px solid rgba(232, 147, 58, 0.20);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+.z-toast-action:hover {
+  background: rgba(232, 147, 58, 0.16);
+  border-color: rgba(232, 147, 58, 0.35);
+}
+.z-toast-action:active {
+  background: rgba(232, 147, 58, 0.22);
+}
+.z-toast-action:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+
+/* ── CLOSE BUTTON ──────────────────────────────────────────── */
+
+.z-toast-close {
+  flex-shrink: 0;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-fg-3);
+  background: transparent;
+  border: none;
+  padding: 3px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color 150ms ease, background 150ms ease;
+  line-height: 0;
+  margin-top: 1px;
+}
+.z-toast-close:hover {
+  color: var(--color-fg-2);
+  background: var(--color-base-3);
+}
+.z-toast-close:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+
+/* ── PROGRESS BAR ──────────────────────────────────────────── */
+/*
+  The .z-toast-progress-fill element receives ONE CSS custom
+  property from React's style prop:
+    style={{ '--toast-duration': `${duration}ms` }}
+
+  This is the only style={} in the system.
+  It is a runtime value (JS number → CSS var), not a hardcoded
+  design token. The CSS reads it here as animation-duration.
+*/
+
+.z-toast-progress {
+  height: 2px;
+  background: var(--color-base-3);
+  overflow: hidden;
+}
+
+.z-toast-progress-fill {
+  height: 100%;
+  width: 100%;
+  animation: toast-progress var(--toast-duration, 4000ms) linear forwards;
+  transform-origin: left center;
+}
+
+/* Visually pause the bar when hovering — JS timer pauses separately */
+.z-toast:hover .z-toast-progress-fill {
+  animation-play-state: paused;
+}
+
+/* Fill color per type */
+.z-toast-progress-fill--success { background: var(--color-success); opacity: 0.70; }
+.z-toast-progress-fill--error   { background: var(--color-danger);  opacity: 0.70; }
+.z-toast-progress-fill--warning { background: var(--color-amber);   opacity: 0.70; }
+.z-toast-progress-fill--info    { background: var(--color-info);    opacity: 0.70; }
+.z-toast-progress-fill--loading { background: var(--color-muted);   opacity: 0.70; }
+.z-toast-progress-fill--default { background: var(--color-border-hi); opacity: 0.90; }
+
+
+/* ── LOADING SPINNER ───────────────────────────────────────── */
+
+.z-toast-spin {
+  animation: toast-spin 0.9s linear infinite;
+}
+
+
+/* ── REDUCED MOTION — respect user preference ──────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .z-toast--entering,
+  .z-toast--exiting {
+    animation: none;
+  }
+  .z-toast-spin {
+    animation: none;
+  }
+  .z-toast-progress-fill {
+    animation: none;
+    width: 0%;
+  }
+}
+
+
+/* ── RESPONSIVE — full-width on mobile ────────────────────── */
+
+@media (max-width: 480px) {
+
+  .z-toast-container--top-left,
+  .z-toast-container--top-center,
+  .z-toast-container--top-right {
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    transform: none;
+    align-items: stretch;
+  }
+
+  .z-toast-container--bottom-left,
+  .z-toast-container--bottom-center,
+  .z-toast-container--bottom-right {
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    transform: none;
+    align-items: stretch;
+  }
+
+  .z-toast {
+    min-width: 0;
+    width: 100%;
+  }
+}

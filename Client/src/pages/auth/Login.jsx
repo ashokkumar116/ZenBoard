@@ -15,6 +15,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from '../../components/ui/Logo';
 import {useAuthStore}  from '../../store/useAuthStore';
+import { useToast } from '../../components/ui/UseToast';
 
 // ── Static content ────────────────────────────────────────────────
 const BRAND_COPY = {
@@ -204,6 +205,7 @@ function SpinnerIcon() {
 
 // ── Page ──────────────────────────────────────────────────────────
 export default function Login() {
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const [values, setValues] = useState({ email: '', password: '' });
@@ -246,13 +248,16 @@ export default function Login() {
       // authStore.setToken(token);
       const response = await login(values);
       if(response.success){
+        toast.success('Logged in successfully');
         navigate('/app');
       }else{
+        toast.error(response.error);
         setGlobalError(response.error);
       }
     } catch (error) {
       // Map specific API errors to field errors if needed
       // e.g. if (err.code === 'INVALID_CREDENTIALS') ...
+      toast.error(error);
       setGlobalError(error);
     }
   }

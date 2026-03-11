@@ -17,7 +17,6 @@ const AppLayout = () => {
     <div className='flex h-screen'>
       <Sidebar />
       <div className="flex-1">
-        <Navbar />
         <main className="p-6">
           <Outlet />
         </main>

@@ -22,7 +22,7 @@
  * collapsed  boolean   Narrow icon-only rail mode.  Default: false
  */
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Logo        from '../../components/ui/Logo';
 import IconDashboard from '../../assets/Icons/IconDashboard';
 import IconTasks from '../../assets/Icons/IconTasks';
@@ -55,7 +55,23 @@ const NAV_SECTIONS = [
 // ── Component ─────────────────────────────────────────────────────
 export default function Sidebar({ collapsed = false }) {
 
-    const {user} = useAuthStore();
+    const {user,logout,error,isLoading} = useAuthStore();
+    const navigate = useNavigate();
+
+    if(isLoading){
+        return <div>Loading...</div>
+    }
+
+    if(error){
+        return <div>Error: {error}</div>
+    }
+
+    const handleLogout = async() => {
+        const res = await logout();
+        if(res.success){
+            navigate('/login');
+        }
+    }
 
   return (
     <aside className="z-sidebar z-scroll flex flex-col h-screen">
@@ -168,6 +184,7 @@ export default function Sidebar({ collapsed = false }) {
             style={{ padding: 4, border: 'none', background: 'transparent' }}
             aria-label="Sign out"
             title="Sign out"
+            onClick={handleLogout}
           >
             <IconSignOut />
           </button>

@@ -2,6 +2,7 @@ import {create} from "zustand";
 import api from "../Services/api";
 
 
+
 export const useAuthStore = create((set) => ({
     user: null,
     setUser: (user) => set({ user }),
@@ -36,5 +37,15 @@ export const useAuthStore = create((set) => ({
             set({ error: error?.response?.data?.message })
         }
     },
-    logout: () => set({ user: null })
+    logout: async() => {
+        try {
+            await api.post('auth/logout')
+            set({ user: null })
+            return {success:true}
+        } catch (error) {
+            console.log(error)
+            set({ error: error?.response?.data?.message })
+            return {success:false,error:error?.response?.data?.message}
+        }
+    }
 }))

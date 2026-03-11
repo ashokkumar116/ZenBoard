@@ -32,6 +32,7 @@ import gsap                            from 'gsap';
 import { useGSAP }                     from '@gsap/react';
 import Logo                            from '../../components/ui/Logo';
 import api from '../../Services/api';
+import { useToast } from '../../components/ui/UseToast';
 
 gsap.registerPlugin(useGSAP);
 
@@ -502,6 +503,7 @@ function FormField({ field, value, error, showPassword, onTogglePassword, onChan
 // REGISTER PAGE
 // ─────────────────────────────────────────────────────────────────
 export default function Register() {
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   // ── Form state ────────────────────────────────────────────────
@@ -621,7 +623,9 @@ export default function Register() {
       const response = await api.post('/auth/register', { name: values.fullName, email: values.email, password: values.password });
       console.log(response.data);
       if(response.status === 201) {
+
         navigate('/login');
+        toast.success('Account created successfully');
       }
     } catch (err) {
       setGlobalError(err?.response?.data?.message ?? 'Something went wrong. Please try again.');
