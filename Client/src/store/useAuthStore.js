@@ -24,6 +24,7 @@ export const useAuthStore = create((set) => ({
         return {success:false,error:error?.response?.data?.message}
        } finally {
         set({ isLoading: false })
+        set({ error: null })
        }
     },
     checkAuth: async() => {
@@ -35,6 +36,8 @@ export const useAuthStore = create((set) => ({
         } catch (error) {
             console.log(error)
             set({ error: error?.response?.data?.message })
+        } finally {
+            set({ error: null })
         }
     },
     logout: async() => {

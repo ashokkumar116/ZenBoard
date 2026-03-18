@@ -1,10 +1,15 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useToast } from '../../components/ui/UseToast';
+import { useAuthStore } from '../../store/useAuthStore';
 const Dashboard = () => {
-    const { toast } = useToast();
+
+  const {checkAuth} = useAuthStore();
+
+
+
   return (
     <div>
-        <button onClick={() => toast.success('Logged in successfully')} className='z-btn z-btn-primary'>Toast</button>
+        
     </div>
   )
 }
